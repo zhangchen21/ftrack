@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "esprima": "^4.0.1",
+    "acorn": "^8.8.0",
     "estraverse": "^5.3.0",
     "excel": "^1.0.1",
     "node-xlsx": "^0.21.0"
@@ -8,11 +8,12 @@
   "name": "ftrack",
   "version": "1.0.0",
   "main": "src/index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "node ./src/index.js"
   },
-  "keywords": ["node"],
+  "keywords": [
+    "node"
+  ],
   "author": "Chen Zhang",
   "license": "MIT",
   "description": "用于追踪查找项目中的某些函数，运行生成excel，包括函数所在位置、携带参数、注释以及提交者等，使用前先在 ftrack.conf 中配置",
@@ -20,5 +21,4 @@
     "type": "git",
     "url": "git://github.com/zhangchen21/ftrack.git"
   }
-  
 }

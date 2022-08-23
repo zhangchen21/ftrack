@@ -1,5 +1,5 @@
 module.exports.ftrack = {
-    path: './test',
+    TargetPath: '../tea-app-cls/src',
     TargetFileName: ['.js', '.ts', '.tsx'],
     functionName: ['getInsightStat', 'reportInsightInfo', 'getHotTagData']
 }

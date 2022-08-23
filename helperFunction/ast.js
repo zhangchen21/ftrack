@@ -1,5 +1,5 @@
 const fs = require('fs');  
-const esprima = require('esprima');
+const acorn = require('acorn');
 const estraverse = require('estraverse');
 const path = require('path');
 const { ftrack } = require('../ftrack.conf.js')
@@ -23,7 +23,7 @@ const { ftrack } = require('../ftrack.conf.js')
 */
 const { functionName } = ftrack;
 exports.analyzeCodeByAst = function(code) {  
-	const ast = esprima.parse(code); 
+	const ast = acorn.parse(code, {ecmaVersion: 2020}); // onComment todo
 	const codeDescribe = {};
 	estraverse.traverse(ast, {  
 		enter: function (node) {  
@@ -56,6 +56,7 @@ exports.analyzeCodeByAst = function(code) {
 							return el.value.cooked
 						}).join('(*)')
 					}
+					// todo 二元表达式
 					else {
 						param = arg.value;
 					}

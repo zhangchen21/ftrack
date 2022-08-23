@@ -6,9 +6,8 @@ const { Regex, outputFile, myData, CodeDescribeIndexNumber } = require('../const
 const { ftrack } = require('../ftrack.conf.js')
 const { analyzeCodeByAst } = require('../helperFunction/ast');
 
-// const filePath = path.resolve('../tea-app-cls/src');
-const filePath = path.resolve('./test');
-const { TargetFileName } = ftrack;
+const { TargetFileName, TargetPath } = ftrack;
+const filePath = path.resolve(TargetPath);
 
 const excelData = [];
 const promises = [];
@@ -51,6 +50,7 @@ function readFilePromise(filedir) {
 					const text = fs.readFileSync(filedir, 'utf-8').toString();
 					// 获取捕获组, 共四个，详见 Regex 的定义
 					const regexResult = getCaptures(text, Regex);
+					if(regexResult) console.log(filedir)
 					for(const item of regexResult) {
 						// 将 文件名数据 添加进去
 						item.splice(CodeDescribeIndexNumber.fileName, 0, filedir);
