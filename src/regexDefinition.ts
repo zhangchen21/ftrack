@@ -1,7 +1,7 @@
-import { ftrack } from '../ftrack.conf';
+let RegexString: string;
 
-const { functionName } = ftrack;
+export const getRegex = () => new RegExp(RegexString, 'gs');
 
-const RegexString = `(?<funcName>${ functionName.join('|') }).*?;`;
-
-export const Regex = new RegExp(RegexString, 'gs');
+export function setTargetFunctionName(functionNames: string[]): void {
+	RegexString = `(?<funcName>${ functionNames.join('|') }).*?;`;
+}

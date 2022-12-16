@@ -24,7 +24,7 @@ export const ResultContent = memo((props) => {
 							<Paragraph>{methon}</Paragraph>
 						</div>
 						:
-						<H2>未识别出病态</H2>
+						<H2 onClick={() => { getHotData(chineseName); }}>未识别出病态</H2>
 				}
 			</Typography>
 		</div>
