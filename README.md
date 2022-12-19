@@ -15,10 +15,10 @@ ftrack
 ### 手动配置
 手动在您的项目根目录新建文件： ftrack.conf.js, 以下是一个示范内容：
 ```javascript
-export const ftrack = {
-  TargetPath: './tests/',
+module.exports = {
+  TargetPath: 'src/',
   TargetFileExtname: ['.js', '.ts', '.tsx'],
-  functionName: ['getHotData',],
+  functionName: ['getHotData'],
   callback: (data) => {
     console.log(data);
   },
