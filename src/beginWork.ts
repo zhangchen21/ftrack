@@ -3,6 +3,7 @@ import path from 'path';
 import { getRegex } from './regexDefinition';
 import { analyzeCodeByAst } from './codeAnalyze';
 import type { funcionCallInfo } from './codeAnalyze';
+import { ProgressBar } from './commandLineTools/progress-bar';
 
 export type codeInfo = {
 	fileName: string,
@@ -12,6 +13,9 @@ export type Callback = (data: codeInfo[]) => void;
 const Output: Array<codeInfo> = [];
 let targetExtname: string[];
 let Callback: Callback;
+// Used to show process bar
+let taskCompleted: number;
+let taskTotal: number;
 const promises: Array<Promise<void>> = [];
 
 // Input function
@@ -22,7 +26,6 @@ export function beginWork(
 ): void {
 	fileExtname && setTargetExtname(fileExtname);
 	callback && setCallback(callback);
-	console.log('Begin to work!');
 
 	if (checkIsDir(filePath)) {
 		handleDir(filePath);
@@ -47,6 +50,8 @@ function checkIsDir(filePath: string): boolean {
 function handleDir(filePath: string) {
 	// Read direction
 	fs.readdir(path.resolve(filePath), (err, fileList: Array<string>) => {
+		// display progress bar
+		initProgressBar(fileList.length * 2);
 		// Walk the file list
 		fileList.forEach(fileName => {
 			handleFile(filePath + fileName);
@@ -69,11 +74,16 @@ function handleFile(filePath: string) {
 
 function ensureWorkIsDone() {
 	Promise.all(promises).then(() => {
-		if (!Callback) {
-			console.log('Precession is done. But no callback function is detected.');
-			return;
+		if(taskCompleted < taskTotal) {
+			taskCompleted = taskTotal;
 		}
-		Callback(Output);
+		setTimeout(() => {
+			if(!Callback) {
+				console.log('Precession is done. But no callback function is detected.');
+				return;
+			}
+			Callback(Output);					
+		}, 501);
 	});
 }
 
@@ -85,7 +95,6 @@ function readFilePromise(filedir: string): Promise<void> {
 			if(isFile) {
 				const text = fs.readFileSync(filedir, 'utf-8').toString();
 				const regexResult = getCaptures(text, getRegex()) ?? [];
-				// console.log('regexResult: '.toUpperCase(), regexResult);
 				for(const item of regexResult) {
 					// Use AST to analyze code
 					const astReult = analyzeCodeByAst(item[0]);
@@ -115,5 +124,23 @@ function getCaptures(text: string, regex: RegExp): RegExpExecArray[] {
 		regexResult.push(match);
 	}
 	return regexResult;
+}
+
+function initProgressBar(total: number) {
+	taskCompleted = 0;
+	taskTotal = total;
+	const pb = new ProgressBar('tracking', 30);
+
+	function downloading() {
+		if (taskCompleted <= total) {
+			pb.render({ completed: taskCompleted, total: taskTotal });
+
+			taskCompleted ++;
+			setTimeout(function () {
+				downloading();
+			}, 500);
+		}
+	}
+	downloading();
 }
 

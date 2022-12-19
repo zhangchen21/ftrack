@@ -1,8 +1,14 @@
+
 import { program } from 'commander';
 import { beginWork } from './beginWork';
 import { setTargetFunctionName } from './regexDefinition';
 import { argv } from 'process';
-import { ftrack } from '/trackconf';
+import {
+	TargetPath,
+	TargetFileExtname,
+	functionName,
+	callback
+} from '../../.trackconf';
 
 program
 	.version('1.0.0', '-v, --version')
@@ -14,13 +20,6 @@ program
 	.parse(argv);
 
 function track(program: any) {
-	const {
-		TargetPath,
-		TargetFileExtname,
-		functionName,
-		callback,
-	} = ftrack;
-
 	if (!functionName?.length) {
 		console.log('No target function name detected, checkout your config please.');
 		return;

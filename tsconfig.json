@@ -12,10 +12,10 @@
 		"typeRoots": [
 			"./node_modules/@types",
 			"./types"
-		]
+		],
+		// "traceResolution": true
 	},
 	"include": [
 		"./src/*.ts",
-		"./types/*.ts"
-	]
+	],
 }

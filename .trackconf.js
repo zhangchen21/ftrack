@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-exports.ftrack = {
+// eslint-disable-next-line no-undef
+module.exports = {
 	TargetPath: './tests/',
 	TargetFileExtname: ['.js', '.ts', '.tsx'],
 	functionName: ['getHotData',],

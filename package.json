@@ -1,9 +1,10 @@
 {
   "name": "ftrack",
-  "version": "1.0.0",
-  "main": "src/index.js",
+  "version": "1.0.1",
+  "main": "bin/ftrack.js",
   "scripts": {
-    "test": "node bin/track.js"
+    "lint": "eslint 'src/**/*' --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
     "track": "bin/track.js"
@@ -21,11 +22,13 @@
   "dependencies": {
     "acorn": "^8.8.1",
     "commander": "^9.4.1",
-    "estraverse": "^5.3.0"
+    "estraverse": "^5.3.0",
+    "single-line-log": "^1.1.2"
   },
   "devDependencies": {
     "@types/estraverse": "^5.1.2",
     "@types/node": "^18.11.15",
+    "@types/single-line-log": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0"
