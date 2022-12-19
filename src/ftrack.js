@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 import { program } from 'commander';
 import { beginWork } from './beginWork';
 import { setTargetFunctionName } from './regexDefinition';
