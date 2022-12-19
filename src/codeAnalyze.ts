@@ -1,8 +1,6 @@
 import { parse } from 'acorn';
 import { traverse } from 'estraverse';
 import * as ESTree from 'estree';
-import { ftrack } from '../ftrack.conf';
-const { functionName } = ftrack;
 
 export type funcionCallInfo = {
 	functionName: string,
@@ -25,10 +23,8 @@ export function analyzeCodeByAst(code: string): funcionCallInfo[] {
 	traverse(ast as ESTree.Node, {
 		enter: function (node) {  
 			if (node.type === 'CallExpression' && 
-				node.callee.type === 'Identifier' &&
-				functionName.includes(node.callee.name)
+				node.callee.type === 'Identifier'
 			) {
-				
 				const funcionCallInfo: funcionCallInfo = {
 					functionName: '',
 					params: [],
