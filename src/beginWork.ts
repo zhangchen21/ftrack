@@ -13,10 +13,12 @@ export type Callback = (data: codeInfo[]) => void;
 const Output: Array<codeInfo> = [];
 let targetExtname: string[];
 let Callback: Callback;
+let hasRegisterHandler: boolean;
 // Used to show process bar
+let hasProcessBar: boolean;
 let taskCompleted: number;
-let taskTotal: number;
-const promises: Array<Promise<void>> = [];
+let taskTotal = 0;
+const taskLists: Array<Promise<string>> = [];
 
 // Input function
 export function beginWork(
@@ -31,8 +33,12 @@ export function beginWork(
 		handleDir(filePath);
 	} else {
 		handleFile(filePath);
-		ensureWorkIsDone();
 	}
+
+	// Display a progress bar
+	initProgressBar();
+
+	ensureWorkIsDone();
 }
 
 function setTargetExtname(extname: string[]) {
@@ -48,15 +54,20 @@ function checkIsDir(filePath: string): boolean {
 } 
 	
 function handleDir(filePath: string) {
-	// Read direction
-	fs.readdir(path.resolve(filePath), (err, fileList: Array<string>) => {
-		// display progress bar
-		initProgressBar(fileList.length * 2);
-		// Walk the file list
-		fileList.forEach(fileName => {
-			handleFile(filePath + fileName);
-		});
-		ensureWorkIsDone();
+	// Read dir
+	const pathList = fs.readdirSync(
+		path.resolve(filePath), 
+		{ withFileTypes: true }
+	);
+
+	// Walk the file list
+	pathList.forEach(path => {
+		if (path.isFile()) {
+			handleFile(`${filePath}${path.name}`);
+		} else {
+			// Recursion. If it is a folder, continue to walk the files under the folder
+			beginWork(`${filePath}${path.name}/`);
+		}
 	});	
 }
 
@@ -65,18 +76,49 @@ function handleFile(filePath: string) {
 		!targetExtname?.length ||
 		targetExtname.includes(path.extname(filePath))
 	) {
-		// Sign a new work
-		promises.push(
-			readFilePromise(path.resolve(filePath))
-		);
+		// Register a new work
+		readFile(filePath);
 	}	
 }
 
+// Register new work
+async function readFile(filedir: string) {
+	const task = fs.promises.readFile(filedir, 'utf-8');
+
+	// push it into queue
+	taskLists.push(task);
+	taskTotal++;
+
+	const text = await task;
+	const regexResult = getCaptures(text, getRegex()) ?? [];
+	for (const data of regexResult) {
+		// Use AST to analyze code
+		const astReult = analyzeCodeByAst(data[0]);
+		const codeInfoList: codeInfo[] = 
+			astReult.map(el => (
+				{
+					fileName: filedir,
+					...el,
+				}
+			));
+		// collect the result in Output
+		Output.push(...codeInfoList);
+	}
+}
+
 function ensureWorkIsDone() {
-	Promise.all(promises).then(() => {
+	if (hasRegisterHandler) {
+		// If already register a handler, just return
+		return;
+	}
+
+	hasRegisterHandler = true;
+	Promise.all(taskLists).then(() => {
 		if(taskCompleted < taskTotal) {
+			// If the process hasn't be 100%, make it be
 			taskCompleted = taskTotal;
 		}
+		// Make sure the bar goes to 100% before we run callback
 		setTimeout(() => {
 			if(!Callback) {
 				console.log('Precession is done. But no callback function is detected.');
@@ -84,35 +126,6 @@ function ensureWorkIsDone() {
 			}
 			Callback(Output);					
 		}, 501);
-	});
-}
-
-function readFilePromise(filedir: string): Promise<void> {
-	return new Promise(resolve => {
-		fs.stat(filedir, (err, stats) => {
-			const isFile = stats.isFile();
-			const isDir = stats.isDirectory();
-			if(isFile) {
-				const text = fs.readFileSync(filedir, 'utf-8').toString();
-				const regexResult = getCaptures(text, getRegex()) ?? [];
-				for(const item of regexResult) {
-					// Use AST to analyze code
-					const astReult = analyzeCodeByAst(item[0]);
-					const codeInfoList: codeInfo[] = astReult.map(el => {
-						return {
-							fileName: filedir,
-							...el,	
-						};
-					});
-					Output.push(...codeInfoList);
-				}
-			}
-			if(isDir) {
-				// Recursion. If it is a folder, continue to walk the files under the folder
-				beginWork(filedir, targetExtname, Callback);
-			}
-			resolve();
-		});
 	});
 }
 
@@ -126,13 +139,17 @@ function getCaptures(text: string, regex: RegExp): RegExpExecArray[] {
 	return regexResult;
 }
 
-function initProgressBar(total: number) {
+function initProgressBar() {
+	if(hasProcessBar) {
+		return;
+	}
+
+	hasProcessBar= true;
 	taskCompleted = 0;
-	taskTotal = total;
 	const pb = new ProgressBar('tracking', 30);
 
 	function downloading() {
-		if (taskCompleted <= total) {
+		if (taskCompleted <= taskTotal) {
 			pb.render({ completed: taskCompleted, total: taskTotal });
 
 			taskCompleted ++;
