@@ -1,6 +1,6 @@
 {
   "name": "ftrack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "bin/ftrack.js",
   "scripts": {
     "lint": "eslint 'src/**/*' --fix",
