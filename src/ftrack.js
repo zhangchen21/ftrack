@@ -8,7 +8,7 @@ import {
 	TargetFileExtname,
 	functionName,
 	callback
-} from '../../ftrack.config';
+} from '../../../ftrack.config';
 
 program
 	.version('1.0.0', '-v, --version')
