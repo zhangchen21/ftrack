@@ -8,7 +8,7 @@ npm install ftrack
 ```
 使用：
 ```
-ftrack
+./node_modules/.bin/track
 ```
 注意，使用前需要先进行配置
 ## 配置方法
