@@ -1,5 +1,6 @@
 src/
 tests/
 tsconfig.json
+ftrack.config.js
 types/
 .*

@@ -8,7 +8,7 @@ import {
 	TargetFileExtname,
 	functionName,
 	callback
-} from '../../.trackconf';
+} from '../../ftrack.config';
 
 program
 	.version('1.0.0', '-v, --version')
@@ -19,7 +19,7 @@ program
 	.option('-init', 'TODO-generate config file from some questions')
 	.parse(argv);
 
-function track(program: any) {
+function track(program) {
 	if (!functionName?.length) {
 		console.log('No target function name detected, checkout your config please.');
 		return;

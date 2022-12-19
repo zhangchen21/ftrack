@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-undef
-module.exports = {
+export const ftrack = {
 	TargetPath: './tests/',
 	TargetFileExtname: ['.js', '.ts', '.tsx'],
 	functionName: ['getHotData',],

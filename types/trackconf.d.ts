@@ -1,6 +1,6 @@
 import { codeInfo } from '../src/beginWork';
 
-declare module '.trackconf' {
+declare module 'ftrack.config' {
 	interface ftrack {
 		TargetPath: string,
 		TargetFileExtname: string[],
