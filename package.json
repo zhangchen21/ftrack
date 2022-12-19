@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "track": "bin/track.js"
+    "track": "./bin/track.js"
   },
   "keywords": [
     "node"
