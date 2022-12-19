@@ -1,14 +1,10 @@
 #!/usr/bin/env node
-import { program } from 'commander';
-import { beginWork } from './beginWork';
-import { setTargetFunctionName } from './regexDefinition';
-import { argv } from 'process';
-import {
-	TargetPath,
-	TargetFileExtname,
-	functionName,
-	callback
-} from '../../../ftrack.config';
+/* eslint-disable no-undef */
+const { program } = require('commander');
+const { beginWork } = require('./beginWork');
+const { setTargetFunctionName } = require('./regexDefinition');
+const process = require('process');
+const config = require(`${process.cwd()}/ftrack.config`);
 
 program
 	.version('1.0.0', '-v, --version')
@@ -17,22 +13,25 @@ program
 	// Options
 	.option('-f, --file', 'just check some specific files')
 	.option('-init', 'TODO-generate config file from some questions')
-	.parse(argv);
+	.parse(process.argv);
 
 function track(program) {
-	if (!functionName?.length) {
-		console.log('No target function name detected, checkout your config please.');
+	if(!config) {
+		console.log('No ftrack.config detected.');
+	}
+	if (!config.functionName.length) {
+		console.log('No target function name detected, checkout your ftrack.config.');
 		return;
 	}
 
-	setTargetFunctionName(functionName);
+	setTargetFunctionName(config.functionName);
 	const { file } = program;
 	if (file) {
 		// If specific file is selected
-		beginWork(file, TargetFileExtname, callback);
+		beginWork(file, config.TargetFileExtname, config.callback);
 		return;
 	}
-	beginWork(TargetPath, TargetFileExtname, callback);
+	beginWork(config.TargetPath, config.TargetFileExtname, config.callback);
 }
 
 track(program);
