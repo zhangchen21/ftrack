@@ -16,10 +16,12 @@ ftrack
 手动在您的项目根目录新建文件： ftrack.conf.js, 以下是一个示范内容：
 ```javascript
 module.exports = {
-	TargetPath: 'src/',
-	TargetFileExtname: ['.js', '.ts', '.tsx'],
-	functionName: ['getHotData'],
-	callback: (data) => {console.log(data);},
+  TargetPath: 'src/',
+  TargetFileExtname: ['.js', '.ts', '.tsx'],
+  functionName: ['getHotData'],
+  callback: (data) => {
+    console.log(data);
+  },
 };
 ```
 这将会在代码分析结束后将提取到的代码信息打印出来
